@@ -1,0 +1,78 @@
+---
+title: "Dang_Son_Lesson04"
+author: "SID 105-215-636"
+date: "Stats 20 Summer 20"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 3
+    theme: darkly
+    highlight: espresso
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## 4 
+
+### 1.(a)
+
+```{r}
+mat <- matrix(c(18.1, 15.5, 14.7, 17.4, 12.6, 15.5, 15.2, 13.2), nrow = 2, ncol = 4, byrow = TRUE)
+mat
+
+```
+
+### 1.(b)
+
+```{r}
+mat[,2] <- sqrt(mat[,2])
+mat
+
+```
+
+### 1.(c)
+```{r}
+is.matrix(mat[-1, -4])
+is.vector(mat[-1, -4])
+```
+R returns a vector if I remove both the first row and the fourth column from (b) and store it as a new object
+
+### 2.(a)
+
+```{r}
+load("Lesson3SU.RData")
+ls()
+lesson4 <- list(Q4B = Q4B, Q4C = Q4C,
+                Q4d331 = Q4D331, Q4D430 = Q4D430,
+                Q4D531 = Q4D531, Q4D614 = Q4D614)
+
+```
+
+### 2.(b)
+
+```{r}
+str(lesson4)
+```
+
+### 3
+
+```{r}
+MyModel <- lm(dist ~ speed, data = cars)
+MySummary <- summary(MyModel)
+mean(MySummary$residuals)
+
+```
+
+### 4
+
+```{r}
+typeof(MyModel)
+typeof(MySummary)
+class(MyModel)
+class(MySummary)
+```
+The result of calling `plot(MyModel)` are plotting the linear regression model we generated from the data with *dist* as the dependent variable and *speed* as the independent variable. The plots are constructed based on the statistics from calling the functions `lm()`
+I think the reason why calling `plot(MySummary)` did not generate plots is because even though they are both lists, they are different type of lists. `MyModel` is an object of class `lm` while `MySummary` is an object of class `summary.lm`. Therefore, it was probably because amongst al the different type of argument `plot()` accepts, list of class `lm` is one of them while list of class `summary.lm` isn't.

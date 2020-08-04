@@ -1,0 +1,61 @@
+---
+title: "Lesson 7 - Data Frames III"
+author: "SID 105-215-636"
+date: "Stats 20 Summer 2020"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+---
+
+## 2A
+
+A question we could ask based on these 2 datasets is: What is the amount of covid cases per square kilometer? This can be calculated by dividing the total number of cases per region by the area of that region. This will give us a sense of how spread out the virus is per region.
+
+## 2B
+
+```{r 2B}
+library(readr)
+library(dplyr)
+COlevel <- read_csv("COlevel.csv")
+COmostrecent <- read_csv("COmostrecent.csv")
+glimpse(COlevel)
+glimpse(COmostrecent)
+combined <- inner_join(COlevel, COmostrecent, by = c("state", "county"))
+glimpse(combined)
+```
+
+## 3A
+
+The difference in the number of rows might due to the fact that not all counties have corona virus cases. Therefore, there are less rows in **COmostrecent** than **COlevel**.
+After merging, there are about 150 less rows than **COlevel**. This might due to a combination of counties without Coronavirus and introduction of new counties that did not exist before.
+
+## 3B
+
+```{r 3B}
+
+STfeb20 <- read_csv("STfeb20.csv")
+STmar20 <- read_csv("STmar20.csv")
+dim(STfeb20)
+dim(STmar20)
+Feb_right_Mar <- right_join(STfeb20, STmar20, by="state")
+Feb_left_Mar <- left_join(STfeb20, STmar20, by="state")
+dim(Feb_right_Mar)
+dim(Feb_left_Mar)
+
+```
+
+The number of cases increase by `r nrow(STfeb20) - 4` from January to February and by `r nrow(STmar20) - nrow(Feb_left_Mar) ` from February to March.
+
+## 3C
+
+```{r 3C}
+left <- merge(COlevel, COmostrecent, 
+              by = c("state", "county"), all.x = TRUE)
+right <- merge(COlevel, COmostrecent, 
+              by = c("state", "county"), all.y = TRUE)
+observation_num_left <- nrow(left)
+observation_num_right<- nrow(right)
+```
+
+The number of observations I got for left join is `r observation_num_left` and the number of observations I got for right join is `r observation_num_right`. The numbers are different might be because the total number of observation of both the original datasets are different. Therefore, even if all the observations from the smaller dataset match the bigger dataset, the bigger dataset won't be able to match all the smaller dataset observations. 

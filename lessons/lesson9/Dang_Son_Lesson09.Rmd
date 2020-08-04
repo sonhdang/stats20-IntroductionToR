@@ -1,0 +1,127 @@
+---
+title: "Lesson 9 - Graphics II"
+author: "SID 105-215-636"
+date: "Stats 20 Summer 2020"
+output: html_document
+---
+
+Libraries that you may need:
+
+```{r message = FALSE, warning = FALSE}
+library(readr)
+library(tidyverse)
+library(gridExtra)
+library(ggthemes)
+```
+
+## 1 Scatterplot
+
+```{r}
+load("Lesson9SU.RData")
+test <- inner_join(nbaall, salary, by = "Player")
+head(test)
+test <- test %>% 
+  mutate(height = (as.numeric(substr(test$Ht, start = 1, stop = 1)) * 12) + 
+           (as.numeric(substr(test$Ht, start = 3, stop = 4))))
+ggplot(test, aes(x = height, y = log(test$Salary2019-20), color = Pos)) +
+  geom_point(data = test) +   # Adding points to the plot
+  geom_smooth(method='lm', se = FALSE) +  # Adding lines to the plot
+  labs(title="NBA Player Salary on Height", subtitle="2019-2020") + # Adding title and subtitle to the plot
+  scale_x_continuous(name = "Height in Inches") + # Adding labels to the x-axis
+  scale_y_continuous(name = "Salary in Dollars") +  # Adding labels to the y-axis
+  scale_color_discrete(name = "Position") + # Rename the legend
+  theme(panel.background = element_blank(), # Clear the grey background
+        panel.grid.major = element_line(colour="grey"), # Set the grid lines' color to grey
+        panel.grid.minor = element_blank(), # Remove the minor grid lines
+        plot.title = element_text(hjust = 0.5), # Align the title to the center
+        plot.subtitle = element_text(hjust = 0.5)) # Align the subtitle to the center
+```
+
+
+## 2 Boxplots
+
+```{r}
+is_outlier <- function(x) {
+  return(x < quantile(x, 0.25) - 2 * IQR(x) | x > quantile(x, 0.75) + 2 * IQR(x))
+}
+
+## modify the data, recall %>% is interpreted as "then"
+## I created separate outliers for the teams DAL and NOP because I needed
+## to print them differently to fit them on the graphic
+## it is inefficient, but it gives me the "look" I want in little time.
+test <- test %>% 
+  mutate(outlier = ifelse(is_outlier(`height`), Player, as.numeric(NA)),
+         outlier2 = ifelse(is_outlier(`height`),
+                             Player, as.numeric(NA)))
+## now create the boxplot
+ggplot(test, aes(x = reorder(Pos, `height`, FUN = median), 
+                 y = `height`)) + 
+    stat_boxplot(geom = "errorbar", width = 0.75, coef = 1.5) + 
+    geom_boxplot() +
+    scale_fill_manual(values=c("grey", "cyan"), 
+                      name = "NBA Final 2019") +
+    geom_text(aes(label = outlier), na.rm = TRUE, size = 4, 
+              angle = 45, hjust = -0.05, color = "blue") +
+    geom_text(aes(label = outlier2), na.rm = TRUE, size = 4, 
+              angle = 45, hjust = 0.75, color = "blue") +
+    labs(title="Boxplot of Height by position, 2019-2020",
+        x ="Position", y = "Height") +
+    theme_few() +
+    theme(plot.title = element_text(hjust = 0.5),
+          legend.position="bottom")
+
+```
+
+## 3 Histograms
+
+```{r fig.height=8}
+
+yelp3 <- read_csv("http://www.stat.ucla.edu/~vlew/datasets/yelp3.csv")
+
+p1 <- ggplot(data=yelp3[yelp3$categories.0 == "Vegan",], aes(stars)) +
+  geom_histogram(breaks=seq(1,5,0.5), fill="orange",
+                 colour="black", aes(y=..density..)) +
+  labs(title="Vegan Ratings") + 
+  theme(panel.background = element_blank(),
+        plot.title = element_text(hjust = 0.5),
+        axis.line = element_line(colour="black"))
+
+p2 <- ggplot(data=yelp3[yelp3$categories.0 == "Buffets",], aes(stars)) +
+  geom_histogram(breaks=seq(1,5,0.5), fill="blue",
+                 colour="black", aes(y=..density..)) +
+  labs(title="Buffet Ratings") +
+  theme(panel.background = element_blank(),
+        plot.title = element_text(hjust = 0.5),
+        axis.line = element_line(colour="black"))
+
+p3 <- ggplot(data=yelp3[yelp3$categories.0 == "Sports Bars",], aes(stars)) +
+  geom_histogram(breaks=seq(1,5,0.5), fill="maroon",
+                 colour="black", aes(y=..density..)) +
+  labs(title="Sports Bar Ratings") +
+  theme(panel.background = element_blank(),
+        plot.title = element_text(hjust = 0.5),
+        axis.line = element_line(colour="black"))
+
+grid.arrange(p1, p2, p3, ncol=1)
+
+```
+
+## 4 Multiple Line Graph, Stacked Data
+
+```{r}
+GOOGL <- read_csv("GOOGL.csv")
+
+GOOGL2020 <- GOOGL %>% 
+    select(Date, Open, High, Low, Close) %>% 
+    pivot_longer(-Date, names_to = "status", values_to = "price")
+
+ggplot(data=GOOGL2020, aes(x = Date, y = price, color = status)) + 
+  geom_line() +
+  labs(title="Google (GOOGL) Price in the past 30 days", 
+       caption="Source: Yahoo.com finance", 
+       y="Price in Dollars") +
+  scale_x_date(date_breaks = "days" ,date_labels = "%m/%d") +
+  theme_fivethirtyeight() + 
+  theme(axis.text=element_text(size=8, angle = 90))
+```
+

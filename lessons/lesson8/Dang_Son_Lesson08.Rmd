@@ -1,0 +1,136 @@
+---
+title: "Lesson 8 - Base R Graphics"
+author: "SID 105-215-636"
+date: "Stats 20 Summer 2020"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+---
+
+## 1 Line Graph with Multiple Lines and Legend
+
+```{r fig.width= 10}
+load("ST3Covid19.Rdata")
+plot(CA$dailydeaths~CA$date, type = "l", xlab="Month", ylab="daily deaths", col="green")
+lines(FL$dailydeaths~FL$date, col="purple")
+lines(TX$dailydeaths~TX$date, col="aquamarine")
+# smooth lines
+lines(smooth.spline(CA$dailydeaths ~ CA$date, spar = 0.5), 
+                    col = "darkgreen", lwd = 2)
+lines(smooth.spline(FL$dailydeaths ~ FL$date, spar = 0.5), 
+                    col = "darkorchid", lwd = 2)
+lines(smooth.spline(TX$dailydeaths ~ TX$date, spar = 0.5), 
+                    col = "aquamarine4", lwd = 2)
+legend(legend=c("CA","FL","TX"), lty=1, col = c("green","purple","aquamarine"), "topleft")
+```
+
+
+## 2 Boxplots 
+
+```{r fig.height = 8, fig.width = 10}
+library(readr)
+DISNEY <- read_csv("http://www.stat.ucla.edu/~vlew/datasets/DISNEY.csv")
+PAYPAL <- read_csv("http://www.stat.ucla.edu/~vlew/datasets/PAYPAL.csv")
+
+boxplot(DISNEY$`Adj Close` ~ DISNEY$YM, xlab="Year-Month",
+        ylab="Adjusted Closing Price", col="cyan",
+        ylim=c(80,180), cex.axis=0.65, cex.lab=0.85,
+        boxwex=0.5, main="Boxplot Example - Stock Price 7/19 - 6/20")
+boxplot(PAYPAL$`Adj Close` ~ PAYPAL$YM, 
+         col="yellow", add=TRUE, axes = FALSE,
+        at=1:12 + 0.4, boxwex=0.5)
+axis(side=1, labels=as.factor(unique(PAYPAL$YM)),
+     at = 1:12 + 0.4, cex.axis=0.65,)
+legend("bottom", y = 110, legend=c("Disney", "Paypal"),
+       col = c("cyan", "yellow"), pch=15)
+
+```
+
+## 3 Histograms of Yelp Ratings
+
+```{r fig.height=8, fig.width = 8}
+par(mfrow=c(3,1))
+yelp3 <- read_csv("http://www.stat.ucla.edu/~vlew/datasets/yelp3.csv")
+hist(yelp3[yelp3$categories.0 == "Vegan",]$stars, prob=TRUE, xlim=c(1,5),
+     col="chocolate1", xlab="Yelp Rating", main="Vegan Ratings",)
+hist(yelp3[yelp3$categories.0 == "Buffets",]$stars, prob=TRUE, xlim=c(1,5),
+     col="blue", xlab="Yelp Rating", main="Buffet Ratings")
+hist(yelp3[yelp3$categories.0 == "Sports Bars",]$stars, prob=TRUE, xlim=c(1,5),
+     col="maroon", xlab="Yelp Rating", main="Sports Bar Ratings")
+```
+
+
+## 4A Scatterplot Matrix
+
+```{r 4A, fig.width=10, fig.height=10}
+par(mfrow=c(1,1))
+library(ggplot2)
+head(midwest[c(5,10,18:20),])
+plot(midwest[,c(5,10,18:20,23)], col="blue", pch = 20,
+     main="Scatterplot Matrix of ggplot dataset midwest")
+```
+
+## 4B Scatterplot with lines for means, different colors, legend
+
+```{r 4B, fig.width=8, fig.height=6}
+head(midwest)
+plot(midwest$percollege ~ midwest$perchsd, col = factor(midwest$state), pch=20,
+     main="Plot of College degree on high school diploma with medians drawn",
+     xlab="perchsd", ylab="percollege", cex=0.6)
+legend("topleft", legend=unique(midwest$state),
+       col=factor(unique(midwest$state)), pch=20)
+abline(h=median(midwest$percollege), col="red")
+abline(v=median(midwest$perchsd), col="blue")
+
+```
+
+## 4C Scatterplot with Regression line
+
+```{r 4C}
+plot(midwest$percprof ~ midwest$percollege, xlab="percollege",
+     ylab="percprof", pch=20, col="blue", cex=0.5,
+     main="Plot of Professionals on percent college degree with regression line")
+abline(lm(midwest$percprof ~ midwest$percollege), col="red", lwd=2)
+```
+
+## 5A Two barplots
+
+```{r 5A, fig.width=10}
+library(dplyr)
+par(mfrow = c(1,2))
+group_by_cut <- diamonds %>%
+  group_by(cut) %>%
+  summarize(FREQ = n())
+barplot(group_by_cut$FREQ, names.arg = group_by_cut$cut, 
+        cex.names = 0.75, col = rainbow(5))
+group_by_color <- diamonds %>%
+  group_by(color) %>%
+  summarize(FREQ = n())
+barplot(group_by_color$FREQ, names.arg = group_by_color$color, 
+        cex.names = 0.75, col = terrain.colors(7))
+```
+
+## 5B Stacked Barplot
+
+```{r 5B, fig.width=7, fig.height=8}
+cut_color <- table(diamonds$cut, diamonds$color)
+barplot(cut_color, ylim=c(0,12000),
+        col=c("red", "yellow", "green", "orange", "purple"))
+```
+
+## 5C Percent Stacked Barplot
+
+```{r 5C}
+prop_cut_color <- prop.table(table(diamonds$cut, diamonds$color),2)
+prop_cut_color
+barplot(prop_cut_color, col=c("red", "yellow", "green", "orange", "purple"))
+```
+
+## 5D Grouped Barplot
+
+```{r 5D}
+barplot(cut_color, beside=TRUE,
+        col=c("red", "orange", "yellow", "green", "cyan"))
+
+```
