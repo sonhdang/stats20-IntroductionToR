@@ -1,0 +1,117 @@
+---
+title: "Dang_Son_Lab1"
+author: "SID 105-215-636"
+date: "6/25/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Lab 1 {.tabset}
+
+## 1. Numeric Vectors
+
+### A.
+```{r}
+atan(1 / 1:1000)
+```
+### B.
+```{r}
+x <- 1:1000
+y <- atan(1 / x)
+z <- 1 / tan(y)
+```
+### C.
+```{r}
+x == z
+identical(x, z)
+all.equal(x, z)
+all.equal(x, z, tolerance = 1)
+all.equal(x, z, tolerance = 0)
+```
+If the tolerance is set to 0, there needs to be no difference between the 2 arguments in order for the function to return TRUE. Even if the differences are smaller than the default value, which is close to 1.5e-8, the function will still not return TRUE.
+
+## 2. Character and Logical Vectors
+
+### A.
+```{r}
+a <- c("alpha", "bravo", "charlie", "delta", "echo")
+```
+### B.
+```{r}
+print(a[4])
+```
+### C.
+```{r}
+a <- c("Able", "Baker", "Charlie")
+b <- c(T, T, F)
+b + 3
+d <- matrix(c(a,b),nrow=3)
+str(b)
+dim(b)
+length(b)
+str(d[, 2])
+dim(d[, 2])
+length(d[, 2])
+typeof(d[, 2])
+typeof(b)
+```
+The reason for the error that student gets for the line `d[,2] + 3` is because the type of vector extracted from `d[,2]` is character, not logical. Therefore, R does not know what to do with the `+` operation between a character type and a numeric type.
+
+
+## 3. Matrices
+
+### A.
+```{r}
+mat <- matrix((1:300), ncol = 3, byrow = TRUE)
+head(mat)
+```
+### B.
+```{r}
+mat[2, ]
+```
+### C.
+```{r}
+mat[seq(from = 1, to = 100, by = 2), ]
+```
+### D.
+First, on the tab **help**, I clicked on the *house symbol* to make sure I was at the Home page of the R Online Help System. Then I scrolled down to the **Reference** section and clicked on **Search Engine & Keywords**. Next, I put in the word **matrix** to look up all the functions that are related to matrices. Finally, I found on the lists of the function related to matrices that `Matrix.solve()` give you an inverse matrix of a square matrix.
+
+### E.
+```{r}
+m <- matrix(c(1,5,1,6,8,4,23,6,2), ncol = 3, byrow = TRUE)
+m
+m_inverse <- solve(m)
+m_inverse
+zapsmall(m %*% m_inverse) # zapsmall() replaces values close to 0 with 0
+```
+
+## 4. Applications
+
+### A.
+It might be a bad idea to create objects named T or F because they are special names which R interprets as logical values TRUE and FALSE respectively. If you name an object either T or F, the object becomes ambiguous. In the case you use have object names either T or F, you might later forget and use T as TRUE and F as FALSE while T and F are no longer the logical values.
+
+### B.
+* When R computes `log(-1)`, it returns `NaN` because the expression is mathematically impossible to calculate. Therefore, R does not know what to do with the expression and returns `NaN` which is short for Not-a-Number
+* When R computes `log(0)`, it returns `-Inf` because in the computer world, the number 0 is not the number 0 as what we, as human beings, think the number 0 is. In the computer world, the number 0 represent an extremely small number. Therefore, when we calculate log(0), the result is `-Inf` as $e^{-Inf}$ approaches 0.
+* When R computes `log(Inf)`, it returns `Inf` because `Inf` represents a very big number which exceeds the ability of the computer to represent or display. The value `Inf` does however exists and is a real number. Therefore mathematically, `log(Inf)` is also a valid operation and the result is $e^{Inf}$ which approaches `Inf`
+
+### C.
+The student's code does not work because `log(tone2 > 0)` returns a numerical vector of the same length as tone2 and evaluates $log(j^{th}>0)$ with $j^{th}$ being either TRUE or FALSE which are interpreted as 1 or 0 in this case. Therefore the results are either 0 or -Inf.
+```{r}
+tone2 <- c(8, -1, 0, 1, 6, 7, 5, 3, 0, 9, Inf)
+tone2[is.finite(tone2)]
+```
+
+### D.
+```{r}
+mat <- matrix(1:9, nrow=3, byrow=TRUE)
+wins <- rbind(mat[1,], mat[2,], mat[3,],
+              mat[,1], mat[,2], mat[,3],
+              c(1, 5, 9), c(7, 5, 3))
+wins
+```
+
+
