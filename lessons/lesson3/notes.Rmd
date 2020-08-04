@@ -1,0 +1,29 @@
+---
+title: "lesson3_notes"
+author: "SID 105-215-636"
+date: "Stats 20 Summer 20"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse) # The built-in data starwars found here
+library(DT) # The function datatable is from this package
+datatable(starwars)
+is.data.frame(starwars)
+is_tibble(starwars) ## this function comes from dplyr
+starwars$hair_color
+is.vector(starwars$hair_color)
+starwars$hair_color[which(starwars$hair_color == "white")]
+white <- starwars[which(starwars$hair_color == "white"), ]
+datatable(white)
+table(starwars$species) # table() gives us a contigency table of counts of the information
+table(starwars$species)[c("Wookiee", "Ewok", "Droid")] # If we wanted to show only select values, we could index it using characters
+
+starwars$hair_color[is.na(starwars$hair_color)] <- "No Hair"
+starwars$hair_color[1:15]
+```
+

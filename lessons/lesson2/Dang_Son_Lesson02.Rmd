@@ -1,0 +1,141 @@
+---
+title: "Dang_Son_Lesson02"
+author: "SID 105-215-636"
+date: "Stats 20 Summer 20"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 4. {.tabset}
+
+The {.tabset} gives you a way to organize your rendered html output.  It allows a reader to click instead of scroll.  You should delete this paragraph before you submit your lesson. The paragraph is just here to inform.
+
+### A.
+
+```{r}
+## this is a comment in an R chunk
+## type your R code after this line
+print(paste("The result is:", 9 / 3 + 7 * 5 * 6 + 16 ))
+```
+
+### B.
+
+```{r}
+## this is a comment in an R chunk
+## type your R code after this line
+print(paste("The result is:", 24 / 3 * 4 - 3 + 7))
+```
+
+### C.
+
+```{r}
+## this is a comment in an R chunk
+## type your R code after this line
+print(paste("The result is:", 10 - 4 + 7 + 3 * (24 / 4)))
+```
+
+### D.
+
+```{r}
+## this is a comment in an R chunk
+## type your R code after this line
+print(paste("The result is:", sqrt(16) / 2 ^ 3))
+```
+
+### E.
+
+```{r}
+## this is a comment in an R chunk
+## type your R code after this line
+result <- log(0.3, base = exp(1)) #log(value, base)
+print(paste("Log of 0.3 base e is:", result))
+print(paste("Inverse of the result above is:", exp(1) ^ result))
+```
+
+### F.
+* %% is modulus operator in R.
+* 1:100 %% 3 will give you 100 elements with the values 1, 2, 0 recursively
+* Similarly 1:100 %% 2 will give you 100 elements with the values 1, 0 recursively
+* And 1:100 %% 5 will give you 100 elements with the value 1, 2, 3, 4, 0 recursively
+* The & operator will interpret 0 as `FALSE` and any other value as `TRUE` before AND-ing two vectors.
+  + `FALSE` means the value is divisible (because the result of the modulus operation is 0)
+  + `TRUE` means the value is not divisible (because the result of the operation is not 0)
+* Finally `1:100 %% 2 & 1:100 %% 3 & 1:100 %% 5` gives you a boolean vector of indices that are not divisible by 2, 3, and 5.
+- Square bracket [ ] is to extract elements from a vector with a boolean vector of the same size.
+```{r}
+## this is a comment in an R chunk
+## type your R code after this line
+result <- (1:100) [1:100 %% 2 & 1:100 %% 3 & 1:100 %% 5]
+result
+```
+
+### G.
+
+```{r}
+## this is a comment in an R chunk
+## type your R code after this line
+`an object` <- "this is an object"
+`an object`
+```
+
+### H.
+
+```{r}
+## this is a comment in an R chunk
+## type your R code after this line
+4 < 12
+12 > 4
+12 <= 97
+12 > 4
+4 == 4
+4 != 12
+```
+
+### I.
+
+```{r}
+## this is a comment in an R chunk
+## type your R code after this line
+value1 <- 4
+result1 <- value1 * 2
+result1 <- result1 + 2
+result1 <- result1 / 2
+result1 <- result1 + 12
+result1 <- result1 - value1
+result1
+
+value2 <- 12
+result2 <- value2 * 2
+result2 <- result2 + 2
+result2 <- result2 / 2
+result2 <- result2 + 12
+result2 <- result2 - value2
+result2
+
+value3 <- 97
+result3 <- value3 * 2
+result3 <- result3 + 2
+result3 <- result3 / 2
+result3 <- result3 + 12
+result3 <- result3 - value3
+result3
+```
+
+### J.
+
+```{r}
+trick2 <- function(x){
+  (x * 2 + 2) / 2 + 12 - x
+}
+```
+
+this is the test (remove the eval = FALSE when you are ready):
+
+```{r}
+trick2(-7)
+trick2(18)
+trick2(5000000)
+```

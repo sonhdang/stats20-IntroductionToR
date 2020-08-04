@@ -1,0 +1,59 @@
+---
+title: "Dang_Son_Lesson03"
+author: "SID 105-215-636"
+date: "6/29/2020"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 4. 
+### A.
+
+```{r}
+load("~/Desktop/stats20/lessons/lesson3/Lesson3SU.RData")
+ls()
+
+```
+
+### B.
+
+```{r}
+Q4BS <- Q4B[which(Q4B > 0)]
+length(Q4BS)
+```
+There are 2450 values of Q4B that are greater than zero
+
+### C.
+
+```{r}
+Q4C[which(is.na(Q4C))] <- "Unknown"
+sum(Q4C == "Unknown")
+```
+There are 177 "Unknown" values in the vector
+
+### D.
+
+```{r}
+mean(Q4D331, na.rm = TRUE)
+mean(Q4D430, na.rm = TRUE)
+mean(Q4D531, na.rm = TRUE)
+mean(Q4D614, na.rm = TRUE)
+
+median(Q4D331, na.rm = TRUE)
+median(Q4D430, na.rm = TRUE)
+median(Q4D531, na.rm = TRUE)
+median(Q4D614, na.rm = TRUE)
+
+max(Q4D331, na.rm = TRUE)
+max(Q4D430, na.rm = TRUE)
+max(Q4D531, na.rm = TRUE)
+max(Q4D614, na.rm = TRUE)
+
+```
+From the statistics generated from all the vectors above, we can speculate our distribution to be heavily left-skewed as our median ares incrementally 0, 1, 1, and 2 while our means are 17.3, 73.5, 105.5, and 115.8. This is supported by how wide our ranges are with the highest number of deaths of each periods being 12428, 27967, 38489, and 37266 while more than half of the observed regions has less than 1, 2, 2 and 3 deaths (based on our median).
