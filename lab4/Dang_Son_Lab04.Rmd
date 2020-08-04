@@ -1,0 +1,402 @@
+---
+title: "Lab 4"
+author: "SID 105-215-636"
+date: "Stats 20 Summer 2020"
+output:
+  html_document:
+    theme: readable # default, cerulean, journal, flatly, darkly, readable, spacelab, united, cosmo, lumen, paper, sandstone, simplex, and yeti
+    highlight: default # default, tango, pygments, kate, monochrome, espresso, zenburn, haddock, and textmate
+    code_folding: show # show, hide
+    df_print: default # default, kable, tibble, paged
+    tidy: yes
+    toc: yes
+    toc_depth: 4
+    toc_float: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### 1. _Coercion: For each of the following lines a-d, please explain what type of output will result (e.g., a numeric vector) and why R is producing that output._ {.tabset .tabset-fade .tabset-pills}
+
+#### a. `c(0, TRUE)`
+
+The type of output for *a* is a double vector since the number `0` is of type double and high level of coercion than logical `TRUE`. Numbers in R are stored as double as default unless specified with `L
+
+#### b. `c("f", 1)`
+
+The type of output for *b* is a character vector since the character `"f"` is of type character and higher level of coercion than numeric element `1`
+
+#### c. `c(list(1), "b")`
+
+The type of output for *c* is a list since it contains a list which is of higher level of coercion than even a vector. Therefore it is no longer a vector but it has become a list.
+
+#### d. `c(FALSE, 1L)`
+
+The type of output for *d* is a integer vector since it contains an integer which is of higher level of coercion than a logical value `FALSE`.
+
+### 2. _What is the difference between a NULL, an NA, and a NaN?_  {.tabset}
+
+* NA is a logical value which represents a null object. NA is similar to NULL since both are used to represent missing value
+* NULL represents a null object which are commonly returned by expressions or functions as undefined
+* NaN is short for Not-a-Number which is a numeric vector. It's used to indicate an invalid arithmetic expression like division by 0 and etc,.
+
+### 3. _You see this one day (I've seen it...) on a Stat 100A homework:_ {.tabset .tabset-fade .tabset-pills}
+#### So here is the question -- which method do you suppose is more efficient and more important -- why?
+
+I believe the first method is more efficient and more important because it simply initializes `z` to a numeric vector, the vector z will later expands at a later time to a same size as the number of elements. The second method however, initializes `z` with 1000000 elements where the values are 0s and it will still be a size of 1000000 even if we only need a smaller size vector. The second method will also takes up space at the moment the vector is created with the size 1000000 while the first method will only start to use a space equivalent to a numeric vector of size 1000000 at a later time when we need it.
+
+### 4. _A vector `rep(c(TRUE, FALSE), 500000)` is a logical vector. In addition to `TRUE` or `FALSE`, what other value can be included in the vector so that it remains a logical vector and is not coerced into another class?_ {.tabset}
+
+`NA`  can be included in the vector so that the vector remains a logical vector besides `TRUE` and `FALSE` since `NA` is also a logical vector.
+
+### 5. _Your friend is a new R learner and wrote the following:_ {.tabset .tabset-fade .tabset-pills}
+And says to you "Why do I need to use `unlist()` to convert a list to an atomic vector? Why doesn't `as.vector()` work?"   
+
+#### And you say...  
+
+The function `unlist()` turn a list into a vector. This function is created to be used on lists for this particular reason. 
+
+According to the R documentation, the function `as.vector()` is, however, used to "converts a distributed matrix into a non-distributed vector". Since `z` is a list, not a matrix, the function did not have any effect on the `z`.
+
+### 6. Tell your friend {.tabset .tabset-fade .tabset-pills}
+#### why R is responding with "longer object length is not a multiple of shorter object length" and giving that particular vector.
+
+The reason why R give the error `longer object lenght is not a multiple of short object length` is that because the length of the first vector is not the same as the second vector so the operation between the two is unambiguous since R doesn't know the user intention. Therefore, it repeat the second vector to match the length of the first vector and perform the operation while informing the user of the concern.
+
+```{r}
+matrix(rep(c(1:9), 20), ncol = 9, byrow = TRUE) * 1:20
+```
+
+
+### 7. _Factors are tricky, please explain what happened to factor b when we modified its levels?_{.tabset .tabset-fade .tabset-pills}
+
+#### Example
+```{r}
+a <- as.Date(c("1970-01-01", "1971-01-01", "1972-01-01", "1973-01-01", "1974-01-01", "1975-01-01"), format = "%Y-%m-%d")
+b <- factor(weekdays(a))
+levels(b) <- c("Monday", "Tuesday", "Wednesday", "Thursday",
+               "Friday", "Saturday", "Sunday")
+```
+(hint, this was the wrong way to do it)
+
+The function levels(b) simply renames the current factors of `b` to the names specified in vector `c"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")`. In other words, we changed the level that is represented by the string `"Thursday"` to `"Monday"`, `"Friday"` to `"Tuesday"` and so on.
+
+
+
+### 8. _(continuation of 7) What does this code do? Why do b1 and b2 differ from b and from each other?_{.tabset .tabset-fade .tabset-pills}
+
+#### What does this do?
+```{r}
+a <- as.Date(c("1970-01-01", "1971-01-01", "1972-01-01", "1973-01-01", "1974-01-01", "1975-01-01"), format = "%Y-%m-%d")
+b <- factor(weekdays(a), levels = c("Monday", "Tuesday", "Wednesday", "Thursday",
+               "Friday", "Saturday", "Sunday"))
+b
+b1 <- rev(b)
+b1
+
+
+```
+
+#### Why are b1 and b2 different (or in what ways?)
+```{r}
+b1 <- rev(b)
+b1
+```
+
+```{r}
+b2 <- factor(b, levels = rev(b))
+b2
+```
+
+In `b`, the order of levels is from Monday to Sunday.
+
+In `b1`, the order of levels is still from Monday to Sunday, but the order of the elements have been reversed since we use the function `rev()` on vector `b`. That's why we can see that the `Levels` are still in the order of Monday to Sunday even though the order of the elements in the vector has been reversed.
+
+In `b2`, the order of the elements in the list are still the same as `b` but the order of the levels have been changed to `Wednesday Tuesday Monday Saturday Friday Thursday`
+
+
+### 9. _Matrix AA, is a 100 x 10 matrix with the numbers 1 through 1000. For each even row, compute the sum of the even columns of the matrix. This requires one line of code without semi-colons._{.tabset .tabset-fade .tabset-pills}
+
+#### One line please
+```{r}
+AA <- matrix(1:1000, nrow=100)
+rowSums(AA[seq(2,100,2),seq(2,10,2)])
+```
+
+
+### 10. _What does as.matrix() do when used on a data frame with columns of different types?_{.tabset .tabset-fade .tabset-pills}
+
+The function `as.matrix()` will coerce all the other data types to become the data type of the highest level in coercion. For example, if a data frame contains types **double**, **int**, **character**, **logical**. `as.matrix()` will turn all the other data types to **character** type. However, if a data frame only contains types **double**, **int**, and **logical**; `as.matrix()` will turn all the other data types to **double**
+
+### 11. _Can you create a data frame with 0 rows? What about 0 columns? Please write "Yes" or "No" and support your answer with some R code_ {.tabset .tabset-fade .tabset-pills}
+
+Yes, you can create a data frame with 0 row.
+
+Yes, you can create a data frame with 0 columns.
+
+#### some R code
+```{r}
+zero_row <- data.frame(Doubles=double(), Ints=integer(), Logicals=logical())
+zero_row
+
+zero_col <- data.frame(NULL)
+zero_col
+```
+
+
+### 12. _In your own words, please write about the difference between the assignment operators `<-` and `<<-`? You should refer to help(assignOps) for this answer_{.tabset .tabset-fade .tabset-pills}
+
+The `<-` simply makes changes to the variables that the variables are in. If the variables are in a function then the changes is only made to the variables in the function, not outside of the function.
+
+The `<<-` is more powerful which makes changes to variables to all environments. This means that if it is used in a function, it will go out of the function's scope and search for that variable and make changes to it. If the variable doesn't exist, then it will create a the variable with a global scope, even if the operator and variables are defined inside of a function.
+
+### 13 What does deprecated mean?{.tabset .tabset-fade .tabset-pills}
+
+According to R documentation, "When an object is about to be removed from R it is first deprecated and should include a call to `.Deprecated`. "Depracated" in this context means the function `distinct_()` is about to be removed from R and replaced by `distinct()`. This is to make users who have been using `distinct_()` be aware of the change.
+
+### 14. _Your friend has returned and has learned that an R programmer can use proc.time() to time code.  Your friend has worked very hard to produce this number:_{.tabset .tabset-fade .tabset-pills}
+
+```{r}
+# run this before the time test to clear the memory
+rm(list = ls(all.names = TRUE))
+```
+```{r}
+ptm <- proc.time()
+x <- 1:1000000
+my_logsum <- 0
+for(i in 1:length(x)) {
+my_logsum <- my_logsum + log(x[i])
+}
+my_logsum
+proc.time() - ptm
+```
+
+#### Please show your friend  how to produce the same number without using a for loop and without creating my_logsum (it's faster wihtout those two):
+
+```
+ptm <- proc.time()
+x <- 1:1000000
+## your one line of code should go here
+proc.time() - ptm
+```
+```{r}
+# run this before the time test to clear the memory
+rm(list = ls(all.names = TRUE))
+```
+
+this was the time I got, yours will vary, but in general, it should be faster than the code above.
+
+```{r}
+ptm <- proc.time()
+x <- 1:1000000
+sum(log(x))                ## one line of code here
+proc.time() - ptm
+```
+
+### 15. _More Base R FYI_{.tabset .tabset-fade .tabset-pills}
+
+#### match, duplicated, unique  
+
+The three functions above are used to determine if there is an element specified in the vector or data frame.
+
+#### %in%  
+
+The operator `%in%` is similar to match, used to determine if an element is in a container.
+
+#### subset  
+
+`subset` is used to extract a subset from a vector, matrices or data frames using condition.
+
+#### with  
+
+`with` is used to specify a data set where all the operation inside with will be automatically understood by R that it is referred to the data set.
+
+#### by  
+
+`by` is similar to `apply()` where it applies a function to a specified data set
+
+#### split, unsplit  
+
+These two functions are used to split and join dataset based on a set of rule
+
+#### all.equal, identical
+
+These two functions are used to test if the two objects are the same or not.
+
+#### ==, !=, >, >=, <, <= ## help(comparison)
+
+These are comparisons operators where it will return a logical value.
+
+#### is.na
+
+This function check if the the object contains a missing value
+
+#### any
+
+This checks if there is an existence of TRUE value in a logical vector.
+
+#### *, +, -, /, ^, %%, %/% ## help(arithmetic)
+
+These are arithmetic operation used to manipulate numeric values.
+
+#### abs, sign
+
+These functions are used to deal with sign in numeric values. `abs` will strip of all sign while sign will return a vector with the signs of the value.
+
+#### ceiling, floor, round, trunc, signif # help(round)  
+
+These functions are used for rounding and truncating numeric values
+
+#### max, min, prod, sum  
+
+These are aggregate functions which are used to perform on numeric vectors to extract information.
+
+#### cummax, cummin, cumprod, cumsum  
+
+These function are used to calculate cumulative sums, products minima or maxima of the elements of the argument.
+
+#### diff
+
+This function is used to find the difference between to adjacent numeric objects
+
+#### &, |, !, xor # help(Logic)
+
+These are logical expressions which are used to combine multiple logical expressions
+
+#### all
+
+This is the opposite of `any` which only return TRUE if all the values are TRUE or FALSE if all the values are FALSE
+
+#### intersect, union, setdiff, setequal
+
+These function are used to obtain intersect, union, difference and equality between two sets
+
+#### which
+
+This function gives you indices of a logical object
+
+#### matrix
+
+This function is used to make a matrix with the give data
+
+#### the coercion rules character > numeric > logical
+
+This is important to understand how data conforms to different types in different situations
+
+#### length, dim, ncol, nrow
+
+These functions are used to get the dimension of a data frame or a vector
+
+#### cbind, rbind
+
+These functions are used to combine columns or rows
+
+#### names, colnames, rownames
+
+These functions are used to extract names of a data frame
+
+#### t
+
+This function returns the transpose of a matrix
+
+#### diag
+
+This function is used to extract the diagonal of a matrix
+
+#### as.matrix, data.matrix
+
+These functions are used to convert an object to a matrix
+
+#### c
+
+This function is used to create a vector with specified values.
+
+#### rep
+
+This function is used to create a vector with repeated values.
+
+#### seq, seq_alongs
+
+These function is used to create a sequence specified by the arguments.
+
+#### rev
+
+This function is used to reverse the order of a vector
+
+#### sample
+
+This function is used to create a sample out of a vector or a data frame
+
+#### (is).(character/numeric/logical/...)
+
+These function are used to test if an object is of the specified type
+
+#### (as).(character/numeric/logical/...)
+
+These functions are used to convert an object to a desired type
+
+#### list, unlist
+
+These two function are used to form a list or turning a list into a vector
+
+#### data.frame
+
+This function is used to make a data frame
+
+#### factor, levels, nlevels
+
+These functions are used to encode variables in a vector with numeric integers. Levels are the numeric integers and the function `levels` and `nlevels` are used to manipulate levels
+
+#### reorder, relevel
+
+These functions are used to rearrange the order of an obeject
+
+#### array
+
+This function is used a create an array
+
+#### dim
+
+This function returns the dimension of the container
+
+#### dimnames
+
+This function is used to extract the names of all the columns and rows of a container
+
+#### merge
+
+`merge` is used to merge two data frames by using a common key. This is similar to `join`
+
+#### order
+
+This is similar to sort but instead of sorting the object, it returns the indices fo the vector in a sorted order
+
+#### rank
+
+This function returns the sample ranks of the values in a vector
+
+#### sort
+
+This function is used to order objects as ascending or descending
+
+#### cat
+
+`cat` is similar to print but it also concatenates multiple objects
+
+#### print
+
+This function is used to print out values to the console
+
+#### paste, paste0
+
+These functions are used to add characters on character values
+
+#### readline
+
+This function is used to reads a line from the terminal
+
+#### readLines
+
+This function is similar to `readline` which is used to read individual lines of text from a connection. It is set to STDIN as default but you can specified the connection as a file or something else.
