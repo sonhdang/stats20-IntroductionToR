@@ -1,0 +1,160 @@
+---
+title: "KEY Lesson 11 - Tables"
+author: "Vivian Lew SID nnn-nnn-nnn"
+date: "Stats 20 Section 1"
+output: html_document
+---
+
+```{r message=FALSE}
+load(url("http://www.stat.ucla.edu/~vlew/datasets/ucpay2017.RData"))
+library(dplyr)
+```
+
+# 3. Optional
+
+### A. The position "Clin Nurse 2" is among the most common at UCLA.  Please calculate the sum of all of their wages, the total count of these employees, and their mean wage.
+
+I will assume that the sum of all of the wages for "Clin Nurse 2" is the total of everything a "Clin Nurse 2" receives from UCLA, so I chose total wage.  My guess is the motivation for such an analysis to is to figure out how much money will be saved by furloughing or "laying off" UCLA employees in the near future...
+
+```{r}
+sum(uclaPayroll2017$TotalWages[uclaPayroll2017$Position == "Clin Nurse 2"])
+length(uclaPayroll2017$TotalWages[uclaPayroll2017$Position == "Clin Nurse 2"])
+mean(uclaPayroll2017$TotalWages[uclaPayroll2017$Position == "Clin Nurse 2"])
+```
+
+You should always verify your numbers, somehow, there is always a way.
+
+```{r}
+table(uclaPayroll2017$Position == "Clin Nurse 2")
+```
+
+sum divided by n should equal mean.
+
+```{r}
+x <- sum(uclaPayroll2017$TotalWages[uclaPayroll2017$Position == "Clin Nurse 2"])
+l <- length(uclaPayroll2017$TotalWages[uclaPayroll2017$Position == "Clin Nurse 2"])
+x/l == mean(uclaPayroll2017$TotalWages[uclaPayroll2017$Position == "Clin Nurse 2"])
+m <- mean(uclaPayroll2017$TotalWages[uclaPayroll2017$Position == "Clin Nurse 2"])
+```
+
+If you have time, you can make things prettier, formats can help (not required for full credit on any final in Stat 20), I am doing it several different ways:
+
+The total wages for all "Clin Nurse 2" was: `r paste0("$", formatC(x, format="f", digits=0, big.mark=","))`
+
+The number of individuals whose position was "Clin Nurse 2" : `r prettyNum(l, big.mark=",")`
+
+And their mean wage was `r paste("$", prettyNum(m, format="f", digits=7, big.mark=","), sep = "")`
+
+
+### B. Among positions that have at least (at minimum) 30 employees, which 10 positions have the highest means?  Please rank them from the top (1) to the lowest (10).
+
+I am assuming the person meant "mean total wage" because this seems to be the concept of interest given that this is a payroll data set.
+
+This one is way easier to accomplish in dplyr, so in base R, I might do something ugly like
+
+```{r}
+countE <- as.data.frame(table(uclaPayroll2017$Position), stringsAsFactors = FALSE)
+allPosMean <- (tapply(uclaPayroll2017$TotalWages[uclaPayroll2017$Position %in% countE$Var1[countE$Freq > 29]], uclaPayroll2017$Position[uclaPayroll2017$Position %in% countE$Var1[countE$Freq > 29]],
+                 mean))
+allPosN <- tapply(uclaPayroll2017$TotalWages[uclaPayroll2017$Position %in% countE$Var1[countE$Freq > 29]], uclaPayroll2017$Position[uclaPayroll2017$Position %in% countE$Var1[countE$Freq > 29]],
+                 length)
+allPos <- as.data.frame(cbind(allPosN, allPosMean))
+head(allPos[order(allPos$allPosMean, decreasing = TRUE), ], n = 10)
+```
+This is where dplyr is so much cleaner....
+
+```{r message = FALSE}
+uclaPayroll2017 %>% 
+    group_by(Position) %>%
+    mutate(count = n()) %>% 
+    filter(count > 29) %>%
+    summarise(allPosMean = mean(TotalWages), allPosN = n()) %>%
+    arrange(desc(allPosMean))
+```
+
+### C. In the city of Los Angeles, the average (mean) salary of a worker was estimated at $75,000 in 2020.  How many different positions (for example Nurse Pract 2 and Nurse Pract 3 are different positions) with at least 30 employees, have mean RegularPay exceeding $75,000 in the UCLA Payroll data.
+
+```{r message = FALSE}
+uclaPayroll2017 %>% 
+    group_by(Position) %>%
+    mutate(count = n()) %>% 
+    filter(count > 29) %>%
+    summarise(MeanRegularPay = mean(RegularPay), allPosN = n()) %>%
+    filter(MeanRegularPay > 75000) %>%
+    arrange(MeanRegularPay)
+```
+
+If you just wanted to know how many...
+
+```{r message=FALSE}
+junk <- uclaPayroll2017 %>% 
+    group_by(Position) %>%
+    mutate(count = n()) %>% 
+    filter(count > 29) %>%
+    summarise(MeanRegularPay = mean(RegularPay), allPosN = n()) %>%
+    filter(MeanRegularPay > 75000) 
+```
+
+There were `r nrow(junk)` positions on the UCLA payroll that met the criteria.
+
+# 5. See how many you can answer now that you've read the entire lesson
+
+### A.1 minimum "RegularPay" and 
+### A.2 maximum "RegularPay" 
+
+```{r}
+min(uclaPayroll2017$RegularPay)
+max(uclaPayroll2017$RegularPay)
+```
+
+### B. Count all employees whose Position contains the string 'Prof'  (and not 'Profl'):
+
+```{r}
+nrow(uclaPayroll2017[grep("\\bProf\\b", uclaPayroll2017$Position, ignore.case = TRUE),])
+```
+
+and by the way, this is how we could count "Professor" too
+
+```{r}
+nrow(uclaPayroll2017[grep("\\bProf\\b|Professor", uclaPayroll2017$Position, ignore.case = TRUE),])
+```
+
+### C.1 total "Total Wages", for all "Prof" employees
+### C.2 mean "Total Wages" 
+### C.3 median "Total Wages" 
+
+Using base R, with() is a handy function, I am just created a named vector for output.
+
+```{r}
+library(scales) # has the dollar function
+prof <- uclaPayroll2017[grep("\\bProf\\b", uclaPayroll2017$Position, ignore.case = TRUE), c("Position", "TotalWages")]
+with(prof, {c(Total = dollar(sum(TotalWages)), 
+              Mean = dollar(mean(TotalWages)), 
+              Median = dollar(median(TotalWages)))})
+```
+compare it with the dplyr way (a with helps us to get close):
+
+```{r}
+uclaPayroll2017 %>% 
+    filter(grepl("\\bProf\\b", Position, ignore.case = TRUE) == TRUE) %>%
+    summarise(Total = dollar(sum(TotalWages)), 
+              Mean = dollar(mean(TotalWages)),
+              Median = dollar(median(TotalWages)))
+```
+
+
+### D  Find the total and mean "RegularPay" for each unique Position which contains the string 'Prof' (and not 'Profl') and also has at least (at minimum) 40 employees (40 rows, observations).
+
+This one is do-able in base R using a with and a by, but it's ugly.  I'd definitely use dplyr for an interview question like this one:
+
+```{r}
+uclaPayroll2017 %>% 
+    filter(grepl("\\bProf\\b", Position, ignore.case = TRUE) == TRUE) %>%
+    group_by(Position) %>%
+    mutate(count = n()) %>%
+    filter(count > 39) %>%
+    summarise(Total = dollar(sum(RegularPay)), 
+              Mean = dollar(mean(RegularPay)),
+              count = n()) %>%
+    print(n = nrow(.))
+```

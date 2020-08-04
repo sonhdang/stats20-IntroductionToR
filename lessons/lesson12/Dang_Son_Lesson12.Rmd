@@ -1,0 +1,64 @@
+---
+title: "Lesson 12 - Date/Time and Factors"
+author: "SID 105-215-636"
+date: "Stats 20 Summer 2020"
+output: html_document
+---
+
+```{r echo = FALSE, message= FALSE}
+load("Lesson12.RData")
+library(dplyr)
+library(DT)
+library(lubridate)
+```
+
+
+## Introduction 
+
+I want to see if there is any difference in the time it takes when the call is received and when the fire department arrived between call types. To analyze this, I'll first find the difference between the variable `Received.DtTm` and `On.Scene.DtTm` to get the duration. Then I will group them by the variable `Call.Type` for call types and compare their medians.
+
+
+## Coding 
+
+```{r}
+FD12$Received.DtTm <- as.POSIXct(FD12$Received.DtTm,
+                         format = "%m/%d/%Y %I:%M:%S %p")
+FD12$On.Scene.DtTm <- as.POSIXct(FD12$On.Scene.DtTm,
+                       format = "%m/%d/%Y %I:%M:%S %p")
+FD12$START_IN_SECOND <- (hour(FD12$Received.DtTm) * 60 +
+  minute(FD12$Received.DtTm)) * 60 +
+  second(FD12$Received.DtTm)
+FD12$END_IN_SECOND <- (hour(FD12$On.Scene.DtTm) * 60 +
+  minute(FD12$On.Scene.DtTm)) * 60 +
+  second(FD12$On.Scene.DtTm)
+
+FD12$DIFF_IN_SECOND <- FD12$END_IN_SECOND - FD12$START_IN_SECOND
+FD12 <- FD12 %>% slice (which(DIFF_IN_SECOND > 0))
+
+```
+
+## Analysis
+
+```{r}
+
+FD12 %>% 
+  select(Received.DtTm, On.Scene.DtTm, START_IN_SECOND,
+         END_IN_SECOND, DIFF_IN_SECOND, Call.Type) %>% 
+  slice_sample(n = 30) %>%
+  datatable()
+
+FD12 %>%
+  group_by(Call.Type) %>%
+  summarise(Median = median(DIFF_IN_SECOND)) %>%
+  filter(Median != 0) %>% arrange(Median) %>% datatable()
+
+```
+
+
+```{r optional}
+
+## a visualization (totally optional)
+
+```
+
+

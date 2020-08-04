@@ -1,0 +1,58 @@
+---
+title: "Lesson 13 - Interview practice"
+author: "Vivian Lew SID nnn-nnn-nnn"
+date: "Stats 20 Section 1"
+output: html_document
+---
+
+## 1. 
+
+```{r}
+## show your code
+
+
+```
+
+Please provide the answer "inline", that is, as part of the text, for example (I'm using iris, you'll be using the data for lesson 13):
+
+> There were `r nrow(iris)` rows and `r ncol(iris)` columns in the data.
+
+## 2. 
+
+```{r}
+## show your code
+
+
+```
+
+Clearly identify the average sales price in 2006.  Clearly identify the most neighborhood with the highest average sales price and the one with the lowest.  You do not need to print out the ranks of all the neighborhoods. 
+
+## 3. 
+
+```{r}
+## show your code
+
+
+```
+
+Please clearly identify the median sales price of homes which have an indoor square footage of greater than or equal to 2000 ft (excluding porches, garages, decks, and veneers) and identify the percentage of homes which met the criterion.
+
+## 4. 
+
+```{r}
+## show your code
+
+
+```
+
+Provide a visualization and a brief discussion of your findings regarding seasonality of sales.
+
+## 5. 
+
+```{r}
+## show your code
+
+
+```
+
+Provide a visualization which identifies important remodeling factors.  No discussion necessary.

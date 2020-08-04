@@ -1,0 +1,49 @@
+---
+title: "Lesson 11 - Tables"
+author: "Vivian Lew SID nnn-nnn-nnn"
+date: "Stats 20 Section 1"
+output: html_document
+---
+
+# 2.  Typical tabling questions from a SQL interview
+
+Just write "yes" or "no" next to each question and if you wrote "yes", please indicate whether you could program it in base R, dplyr or both:
+
+### A.1 minimum "RegularPay" and 
+
+### A.2 maximum "RegularPay" 
+
+### B. Count all employees whose Position contains the string 'Prof'  (and not 'Profl'):
+
+### C.1 total "Total Wages", 
+
+### C.2 mean "Total Wages" 
+
+### C.3 median "Total Wages" 
+
+### D  Find the total and mean "RegularPay" for each unique Position which contains the string 'Prof' (and not 'Profl') and also has at least (at minimum) 40 employees (40 rows, observations).
+
+
+# 3. Optional
+
+### A.
+
+### B.
+
+### C.
+
+# 5. See how many you can answer now that you've read the entire lesson
+
+### A.1 minimum "RegularPay" and 
+
+### A.2 maximum "RegularPay" 
+
+### B. Count all employees whose Position contains the string 'Prof'  (and not 'Profl'):
+
+### C.1 total "Total Wages", 
+
+### C.2 mean "Total Wages" 
+
+### C.3 median "Total Wages" 
+
+### D  Find the total and mean "RegularPay" for each unique Position which contains the string 'Prof' (and not 'Profl') and also has at least (at minimum) 40 employees (40 rows, observations).

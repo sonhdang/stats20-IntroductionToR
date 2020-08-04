@@ -1,0 +1,99 @@
+---
+title: "Lesson 10 - Data Cleaning"
+author: "SID 105215636"
+date: "Stats 20 Summer 2020"
+output:
+  prettydoc::html_pretty:
+    theme: architect
+    highlight: vignette
+    toc: true
+    toc_depth: 3
+---
+
+# The code used to clean the data
+
+```{r}
+options(width = 120)
+library(dplyr)
+library(stringr)
+load("Lesson10SU.RData")
+
+
+hour = as.numeric(str_sub(as.character(movies100lesson10$Running.Time), 1, 1))
+
+# Running.Time
+minute = as.numeric(str_sub(as.character(movies100lesson10$Running.Time), 6,7))
+minute[is.na(minute)] = 0
+movies100lesson10$Running.Time = hour * 60 + minute
+
+# MONEY TO NUMERIC
+#Gross
+movies100lesson10$Gross <- str_sub(str_replace_all(movies100lesson10$Gross,",",""), start = 2) %>%
+  as.numeric()
+# Opening
+movies100lesson10$Opening <- str_sub(str_replace_all(movies100lesson10$Opening,",",""), start = 2) %>%
+  as.numeric()
+# intGross
+movies100lesson10$intGross <- str_sub(str_replace_all(movies100lesson10$intGross,",",""), start = 2) %>% 
+  as.numeric()
+#Budget
+movies100lesson10$Budget <- str_sub(str_replace_all(movies100lesson10$Budget,",",""), start = 2) %>% 
+  as.numeric()
+
+# OTHERS TO NUMERIC
+#PctOfTotal
+movies100lesson10 <- movies100lesson10 %>% 
+  mutate(PctOfTotal = as.numeric(str_replace_all(X..of.Total, "%","")))
+#Max.Th
+movies100lesson10$Max.Th <- str_replace_all(movies100lesson10$Max.Th,",","") %>%
+  as.numeric()
+#Open.Th
+movies100lesson10$Open.Th <- str_replace_all(movies100lesson10$Open.Th,",","") %>%
+  as.numeric()
+
+#DATE
+movies100lesson10$OpenDate <- as.Date(movies100lesson10$OpenDate,
+                                      format= "%b %d, %Y")
+movies100lesson10$CloseDate <- as.Date(movies100lesson10$CloseDate,
+                                      format= "%b %d, %Y")
+
+#GENRES
+movies100lesson10 <- movies100lesson10 %>%
+  mutate(ActionAdventureThriller = str_detect(movies100lesson10$Genre, "Action|Adventure|Thriller")) %>%
+  mutate(Drama = str_detect(movies100lesson10$Genre, "Drama")) %>%
+  mutate(Comedy = str_detect(movies100lesson10$Genre, "Comedy")) %>%
+  mutate(SciFi = str_detect(movies100lesson10$Genre, "Sci-Fi")) %>%
+  mutate(Family = str_detect(movies100lesson10$Genre, "Family")) %>%
+  mutate(Horror = str_detect(movies100lesson10$Genre, "Horror")) %>%
+  mutate(Biography = str_detect(movies100lesson10$Genre, "Biography"))
+
+#daysrun
+movies100lesson10 <- movies100lesson10 %>%
+  mutate (daysrun = CloseDate - OpenDate)
+
+#FINAL DATATABLE
+movies100fixed <- movies100lesson10 %>%
+  select(Rank, Release, Running.Time, mpaa, Gross, Opening,
+         PctOfTotal, Max.Th, Open.Th, Distributor, intGross,
+         Budget, OpenDate, CloseDate, ActionAdventureThriller,
+         Drama, Comedy, SciFi, Family, Horror, Biography, daysrun)
+```
+
+# datatable result
+
+```{r}
+library(DT)
+datatable(movies100fixed)
+```
+
+# summary result
+
+```{r} 
+summary(movies100fixed)
+```
+
+# str result
+
+```{r} 
+str(movies100fixed)
+```
