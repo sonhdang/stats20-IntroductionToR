@@ -1,0 +1,68 @@
+---
+title: "Lab 3"
+author: "SID 105-215-636"
+date: "Stats 20 Summer 2020"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1. The Visualization
+### A
+
+```{r 1A, message=FALSE, warning=FALSE, fig.height=10}
+library(dplyr)
+library(ggplot2)
+load("LAB3.RData")
+data <- LAinspect %>% 
+  filter(`FACILITY CITY` == "LOS ANGELES") %>%
+  select(`FACILITY DESCRIPTION`, `FACILITY RISK`, GRADE) %>% 
+  filter(`FACILITY DESCRIPTION` == "RESTAURANT")
+sapply(data, function(x) sum(is.na(x))) # Number of missing value in each variable
+data <- data %>% na.omit()
+sapply(data, function(x) sum(is.na(x))) # Number of missing value in each
+range(data$SCORE)
+unique(data$GRADE)
+unique(data$`FACILITY DESCRIPTION`)
+unique(data$`FACILITY SIZE`)
+
+df <- table(data$GRADE, data$`FACILITY RISK`)
+
+barplot(df, ylim=c(0, 35000),
+        col=rainbow(3), xlab="Facility Risk",
+        ylab="Number of restaurants",
+        main="Facility risks and grades of all restaurants in Los Angeles")
+legend("topright", legend=c("A", "B", "C"), col=rainbow(3), pch = 15)
+```
+
+
+## 2. Writing About the Creative Process (please keep them short)
+### A
+
+In the restaurant industry, one of the most important factors is health. This is mostly measured by how the food is prepared and the facility cleanliness. That's why I want to use these data to show people the bigger picture of LA restaurants' in terms of food preparation.
+
+### B
+
+When I first examine the data, the first question popped up in my mind was:"What does each variable describe?" The data was mostly well recorded except for `FACILITY_SIZE` where data were not systematically recorded. Other variables like `OWNER ID`, `OWNER NAME`, `FACILITY NAME` and other Identification variable don't seem to have much analytic value either. It left me with `GRADE` and `FACILITY RISK` to be the most informative data. Those 2 variables are also simpler to understand and indicative of the facility's quality. I also narrowed it down to only in Los Angeles since I live in LA.
+
+### C
+
+After preparing data, I decided to use a stacked bar plot with cumulative data of restaurants of different grades and facility risk levels. I wanted to see the amount of restaurants in each risk levels and what portion of that risk level is of grade A, of B, and of C. This will allow me to see how common each category is and the frequency of the combination of both variables.
+
+## 3. "What If" questions (maybe just a paragraph each)
+### A
+
+The first column I think would be helpful is geographic location of the facility. This can be represented by the longitude and latitude of the facility. This is better represented as two columns, one for longitude and one for latitude for ease of use. The second column is the average price of all the food of the restaurants. This can be represented in US Dollars
+
+### B
+
+The geographic variable will allow me to plot all the facilities on the map and see whether there is any correlation between the quality of the facility and the region that facility is in. The average price of all the food of the facilities will show if there is any correlation between how expensive a restaurant is and its facility quality. Latitude and longitude data can be retrieved from the address of the restaurants. If we have a database of addresses and their corresponding latitude and longitude, we would be able to get this data. The average price of all the food can be calculated by dividing the total price of all the food by the number of food. We can collect the food price's by getting the menu information when we come to inspect the restaurants.
+
+### C 
+
+I think I need to have better graphing and plotting skills using ggplot2. Combining both graphing on a map and representing two to three dimensions of information on a point on the map is also quite challenging. Creative skills also play a big part in creating graphics since it gives you different ways to present data.
